@@ -19,6 +19,10 @@ parser.add_argument("--secret-key",
         help="Amazon API secret key (best if you put in default boto location\
                 ~/.aws/credentials).")
 
+parser.add_argument("--http", action="store_true",
+        help="Use if you are ok with the output URL being http instead of \
+                secure https.")
+
 args = parser.parse_args()
 
 s3key = args.s3key
@@ -39,7 +43,7 @@ s3_conn = boto.connect_s3(args.access_key_id, args.secret_key)
 bucket = s3_conn.get_bucket(bucket)
 key = bucket.get_key(prefix+'/'+file_name)
 if key:
-    print(key.generate_url(expires_in))
+    print(key.generate_url(expires_in, force_http=args.http))
     print("Expires in", expires_in, "seconds.")
 else:
     print("Unable to find key on S3.")
